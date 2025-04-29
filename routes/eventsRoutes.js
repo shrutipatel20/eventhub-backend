@@ -1,18 +1,20 @@
+// routes/eventsRoutes.js
 const express = require('express');
 const router = express.Router();
-const db = require('../config/db'); // Make sure your db connection is properly set up
+const db = require('../config/db');
 
-// Route to fetch all events
+// GET /api/events
 router.get('/', async (req, res) => {
   try {
     const [rows] = await db.query('SELECT * FROM events');
     res.json(rows);
   } catch (err) {
+    console.error('❌ GET ERROR:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// Route to create a new event
+// POST /api/events
 router.post('/', async (req, res) => {
   const { title, date, location } = req.body;
 
@@ -21,6 +23,7 @@ router.post('/', async (req, res) => {
       'INSERT INTO events (title, date, location) VALUES (?, ?, ?)',
       [title, date, location]
     );
+
     res.status(201).json({
       id: result.insertId,
       title,
@@ -28,8 +31,8 @@ router.post('/', async (req, res) => {
       location
     });
   } catch (error) {
-    console.error("💥 ERROR inserting into DB:", error);
-    
+    console.error('❌ INSERT ERROR:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
