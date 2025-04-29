@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/api/events', async (req, res) => {
   const { title, date, location } = req.body;
   try {
     const [result] = await db.query(
@@ -20,7 +20,8 @@ router.post('/', async (req, res) => {
     );
     res.status(201).json({ id: result.insertId, title, date, location });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("💥 ERROR inserting into DB:", error);
+  res.status(500).json({ error: error.message });
   }
 });
 
